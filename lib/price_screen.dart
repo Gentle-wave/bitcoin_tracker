@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'coin_data.dart';
 import 'package:flutter/cupertino.dart';
+import 'dart:io';
 
 class PriceScreen extends StatefulWidget {
   const PriceScreen({Key? key}) : super(key: key);
@@ -13,7 +14,7 @@ class PriceScreen extends StatefulWidget {
 class _PriceScreenState extends State<PriceScreen> {
   String selectedcurrency = 'USD';
 
-  List<DropdownMenuItem<String>> getdropdownitems() {
+  DropdownButton<String> androidDropdown() {
     List<DropdownMenuItem<String>> dropdownitems = [];
 
     for (String currency in currenciesList) {
@@ -23,7 +24,33 @@ class _PriceScreenState extends State<PriceScreen> {
       );
       dropdownitems.add(newitem);
     }
-    return dropdownitems;
+
+    return DropdownButton<String>(
+        value: selectedcurrency,
+        items: dropdownitems,
+        onChanged: (value) {
+          setState(() {
+            selectedcurrency = value!;
+          });
+        });
+  }
+
+  CupertinoPicker iospicker () {
+ List<Text> pickeritems = [];
+    for (String currency in currenciesList) {
+      pickeritems.add(
+        Text(currency),
+      );
+    }
+    
+
+   return CupertinoPicker(
+              itemExtent: 32.0,
+              onSelectedItemChanged: (selectedindex) {
+                print(selectedindex);
+              },
+              children: pickeritems,
+            );
   }
 
   @override
@@ -62,30 +89,10 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: CupertinoPicker(
-              itemExtent: 32.0,
-              onSelectedItemChanged: (selectedindex) {
-                print(selectedindex);
-              },
-              children: [
-                Text('USD'),
-                 Text('EUR'),
-                  Text('GBP'),
-              ],
-            ),
+            child: Platform.isIOS ? iospicker() : androidDropdown(),
           ),
         ],
       ),
     );
   }
 }
-
-
-//  DropdownButton<String>(
-//                 value: selectedcurrency,
-//                 items: getdropdownitems(),
-//                 onChanged: (value) {
-//                   setState(() {
-//                     selectedcurrency = value!;
-//                   });
-//                 }),
